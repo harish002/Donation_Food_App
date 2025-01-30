@@ -56,13 +56,7 @@ fun custTextInput(
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         },
-                        colors = TextFieldDefaults.textFieldColors(
-                            cursorColor = Color.Black,
-                            disabledLabelColor = textcolor,
-                            focusedLabelColor = lableF,
-                            focusedIndicatorColor = textcolor,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
+
                         readOnly = readonly
                     )
                 }

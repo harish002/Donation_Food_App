@@ -51,81 +51,100 @@ fun LoginScreen(votesList: MutableMap<String, Boolean>, navController: NavHostCo
     var Password by remember { mutableStateOf("") }
     val mAuth = FirebaseAuth.getInstance()
 
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize(1f)
-//            .background(MaterialTheme.colorScheme.background)
-//            .padding(10.dp),
-//        verticalArrangement = Arrangement.Center,
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//    ) {
-        Box (Modifier.fillMaxSize()){
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds,
-                painter = painterResource(R.drawable.foodbackground),
-                contentDescription = "app logo",
-            )
+    Column(
+        modifier = Modifier
+            .fillMaxSize(1f)
+            .background(MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box (
+            Modifier.fillMaxSize()
+        ){
+
+//            Image(
+//                modifier = Modifier.fillMaxSize(),
+//                contentScale = ContentScale.FillBounds,
+//                painter = painterResource(R.drawable.foodappbg),
+//                contentDescription = "app logo",
+//            )
 
             Column(
                 Modifier.padding(8.dp,12.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                Spacer(modifier = Modifier.padding(top = 100.dp))
+
                 Image(
-                    modifier = Modifier.size(200.dp),
+                    modifier = Modifier.size(150.dp),
                     painter = painterResource(R.drawable.foodlogo_removebg_preview),
                     contentDescription = "app logo",
                 )
 
-                Text("Food Donation App")
-                custTextInput(label = "Usename",
+                Text(
+                    "Food Donation App",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                custTextInput(label = "Username",
                     value = username,
-                    onValueChange = { username = it })
-                Spacer(modifier = Modifier.padding(10.dp))
+                    onValueChange = { username = it },
+                    modifier = Modifier.fillMaxWidth(0.9f)
+                )
+
+                Spacer(modifier = Modifier.padding(12.dp))
+
                 custTextInput(label = "Password",
                     value = Password,
-                    onValueChange = { Password = it })
+                    onValueChange = { Password = it },
+                    modifier = Modifier.fillMaxWidth(0.9f)
+                )
 
-                Spacer(modifier = Modifier.padding(10.dp))
+                Spacer(modifier = Modifier.padding(12.dp))
 
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Button(onClick = {
+                    Button(
+                        onClick = {
                         loginUser(
                             context = context,
                             navController = navController,
                             user = User(username, Password),
                             mAuth = mAuth
                         )
-                    })
+                    },
+                        modifier = Modifier.fillMaxWidth(0.5f)
+                    )
                     {
-                        Text("Login")
+                        Text(
+                            "Login",
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
                     }
 
-                    Spacer(modifier = Modifier.padding(10.dp))
-
-                    Button(onClick = {
-                        navController.navigate("register")
-                    }) {
-                        Text("Register")
-                    }
                     Spacer(modifier = Modifier.padding(10.dp))
 
                     Button(
-
                         onClick = {
-                            navController.navigate("donor")
-                        }) {
-                        Text("Admin")
+                        navController.navigate("register")
+                     },
+                        modifier = Modifier.fillMaxWidth(0.5f)
+                    ) {
+                        Text(
+                            "Register",
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
                     }
+                    Spacer(modifier = Modifier.padding(10.dp))
                 }
             }
         }
 
-//    }
+    }
 
 
 }
@@ -224,7 +243,7 @@ fun loginUser(context: Context, mAuth: FirebaseAuth,
                 databaseRef.get().addOnSuccessListener { snapshot ->
                     val role = snapshot.child("role").value as? String
                     when (role) {
-                        "Donor" -> navController.navigate("donor")
+                        "Donor" -> navController.navigate("user")
                         "User" -> navController.navigate("user")
                         else -> Toast.makeText(context, "Unknown role!", Toast.LENGTH_SHORT).show()
                     }

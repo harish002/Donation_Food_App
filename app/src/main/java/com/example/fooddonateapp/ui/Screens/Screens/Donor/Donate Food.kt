@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -90,10 +91,10 @@ import com.google.firebase.database.FirebaseDatabase
 //}
 
 @Composable
-fun DonateFood(navController: NavHostController) {
+fun DonateFood(navController: NavHostController,mAuth: FirebaseAuth) {
     var food by remember { mutableStateOf("") }
     var quantity by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf(mAuth.currentUser?.email) }
     var phone by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -109,35 +110,43 @@ fun DonateFood(navController: NavHostController) {
     ) {
         item {
             Image(
-                modifier = Modifier.size(100.dp),
+                modifier = Modifier.size(150.dp),
                 painter = painterResource(R.drawable.foodlogo_removebg_preview),
                 contentDescription = "app logo",
             )
+
+            Spacer(modifier = Modifier.padding(12.dp))
 
             Text(
                 "Add Food Description",
                 style = MaterialTheme.typography.titleLarge
             )
 
+            Spacer(modifier = Modifier.padding(12.dp))
+
             custTextInput(label = "Food Item", value = food, onValueChange = { food = it })
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.padding(8.dp))
 
             custTextInput(label = "Quantity", value = quantity, onValueChange = { quantity = it })
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.padding(8.dp))
 
-            custTextInput(label = "Email", value = email, onValueChange = { email = it })
-            Spacer(modifier = Modifier.padding(4.dp))
+            email?.let { custTextInput(label = "Email", value = it,
+                readonly = true,
+                onValueChange = { email = it }) }
+            Spacer(modifier = Modifier.padding(8.dp))
 
-            custTextInput(label = "Location", value = location, onValueChange = { location = it })
-            Spacer(modifier = Modifier.padding(4.dp))
+            custTextInput(label = "Location", value = location,
+
+                onValueChange = { location = it })
+            Spacer(modifier = Modifier.padding(8.dp))
 
             custTextInput(label = "Phone", value = phone, onValueChange = { phone = it })
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.padding(8.dp))
 
-            Spacer(modifier = Modifier.padding(20.dp))
+            Spacer(modifier = Modifier.padding(12.dp))
 
             Button(
-                enabled = (food.isNotBlank() && quantity.isNotBlank() && email.isNotBlank() && phone.isNotBlank() && location.isNotBlank()),
+                enabled = (food.isNotBlank() && quantity.isNotBlank() && email?.isNotBlank() == true && phone.isNotBlank() && location.isNotBlank()),
                 onClick = {
                     val donationId = databaseRef.push().key // Generate a unique donation ID
                     val donationData = mapOf(
@@ -149,26 +158,30 @@ fun DonateFood(navController: NavHostController) {
                     )
 
                     if (donationId != null) {
-                        val sanitizedEmail = email.replace(".", "_")
-                        databaseRef.child(sanitizedEmail).child(donationId).setValue(donationData)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Toast.makeText(
-                                        context,
-                                        "Donation added successfully!",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    navController.popBackStack()
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "Failed to add donation: ${task.exception?.message}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                        val sanitizedEmail = email?.replace(".", "_")
+                        if (sanitizedEmail != null) {
+                            databaseRef.child(sanitizedEmail).child(donationId).setValue(donationData)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        Toast.makeText(
+                                            context,
+                                            "Donation added successfully!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        navController.popBackStack()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Failed to add donation: ${task.exception?.message}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
-                            }
+                        }
                     }
-                }) {
+                },
+                modifier = Modifier.fillMaxWidth(0.9f)
+            ) {
                 Text("Donate")
             }
         }

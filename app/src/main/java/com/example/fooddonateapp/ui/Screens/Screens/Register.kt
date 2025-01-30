@@ -63,24 +63,25 @@ fun RegisterScreen(navController: NavHostController) {
     ) {
         item {
             Image(
-                modifier = Modifier.size(200.dp),
+                modifier = Modifier.size(150.dp),
                 painter = painterResource(R.drawable.foodlogo_removebg_preview),
                 contentDescription = "app logo",
             )
 
             Text("Food Donation App", style = MaterialTheme.typography.titleLarge)
+            Spacer(modifier = Modifier.padding(12.dp))
 
             custTextInput(label = "Username", value = username, onValueChange = { username = it })
-            Spacer(modifier = Modifier.padding(10.dp))
+            Spacer(modifier = Modifier.padding(12.dp))
 
             custTextInput(label = "Password", value = password, onValueChange = { password = it })
-            Spacer(modifier = Modifier.padding(10.dp))
+            Spacer(modifier = Modifier.padding(12.dp))
 
             custTextInput(label = "Email", value = email, onValueChange = { email = it })
-            Spacer(modifier = Modifier.padding(10.dp))
+            Spacer(modifier = Modifier.padding(12.dp))
 
             custTextInput(label = "Phone", value = phone, onValueChange = { phone = it })
-            Spacer(modifier = Modifier.padding(10.dp))
+            Spacer(modifier = Modifier.padding(12.dp))
 
             // Role Selector
             var expanded by remember { mutableStateOf(false) }
@@ -137,15 +138,19 @@ fun RegisterScreen(navController: NavHostController) {
             }
 
 
-
-
-            Spacer(modifier = Modifier.padding(20.dp))
+            Spacer(modifier = Modifier.padding(12.dp))
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Button(onClick = {
-                    navController.navigate("login")
-                }) {
-                    Text("Login")
+                Button(
+                    onClick = {
+                     navController.navigate("login")
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        "Login",
+                        modifier = Modifier.padding(vertical = 6.dp)
+                    )
                 }
 
                 Spacer(modifier = Modifier.padding(10.dp))
@@ -153,14 +158,19 @@ fun RegisterScreen(navController: NavHostController) {
                 Button(
                     enabled = (password.isNotBlank() && username.isNotBlank() && email.isNotBlank() && phone.isNotBlank()),
                     onClick = {
-                    registerNewUser(
-                        context,
-                        mAuth,
-                        UserRegister(username, password, phone, email, selectedRole),
-                        navController
+                        registerNewUser(
+                            context,
+                            mAuth,
+                            UserRegister(username, password, phone, email, selectedRole),
+                            navController
+                        )
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        "Register",
+                        modifier = Modifier.padding(vertical = 6.dp)
                     )
-                }) {
-                    Text("Register")
                 }
             }
         }
