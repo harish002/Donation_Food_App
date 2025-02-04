@@ -62,12 +62,6 @@ fun LoginScreen(votesList: MutableMap<String, Boolean>, navController: NavHostCo
             Modifier.fillMaxSize()
         ){
 
-//            Image(
-//                modifier = Modifier.fillMaxSize(),
-//                contentScale = ContentScale.FillBounds,
-//                painter = painterResource(R.drawable.foodappbg),
-//                contentDescription = "app logo",
-//            )
 
             Column(
                 Modifier.padding(8.dp,12.dp),
@@ -83,7 +77,7 @@ fun LoginScreen(votesList: MutableMap<String, Boolean>, navController: NavHostCo
                 )
 
                 Text(
-                    "Food Donation App",
+                    "Food Donation",
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )

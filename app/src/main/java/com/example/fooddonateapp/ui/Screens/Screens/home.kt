@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -83,12 +84,27 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun User(mAuth: FirebaseAuth, navController: NavHostController) {
-    val name = mAuth.currentUser?.email
+    var name = remember { mutableStateOf<String?>(null) }
+
     val id = mAuth.currentUser?.uid
 
     val role = remember { mutableStateOf<String?>(null) }
 
     val databaseRef = id?.let { FirebaseDatabase.getInstance().getReference("users").child(it) }
+
+    databaseRef?.child("username")?.get()?.addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            val username = task.result?.value as? String
+            // Use the fetched phone number
+            name.value = username
+
+            Log.d("Username", "Fetched phone: $username")
+        } else {
+            // Handle failure
+            name.value = null
+            Log.e("PhoneNumber", "Failed to fetch phone number", task.exception)
+        }
+    }
 
     LaunchedEffect(mAuth) {
         getUserRole { userRole ->
@@ -102,7 +118,7 @@ fun User(mAuth: FirebaseAuth, navController: NavHostController) {
                 .padding(12.dp)
                 .fillMaxSize()
         ) {
-            CircularProfile(name, mAuth = mAuth)
+            CircularProfile(name.value, mAuth = mAuth)
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -123,7 +139,7 @@ fun User(mAuth: FirebaseAuth, navController: NavHostController) {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .aspectRatio(1f)
+                                .wrapContentHeight()
                                 .clickable { action() },
                             shape = RoundedCornerShape(12.dp),
                             elevation = CardDefaults.elevatedCardElevation(4.dp)
@@ -131,24 +147,26 @@ fun User(mAuth: FirebaseAuth, navController: NavHostController) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(16.dp),
+                                    .padding(vertical = 12.dp)
+                                    .padding(horizontal = 12.dp)
+                                ,
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Image(
                                     painter = painterResource(id = item.second),
                                     contentDescription = item.first,
-                                    modifier = Modifier.size(120.dp)
+                                    modifier = Modifier.size(100.dp)
                                 )
 
-                                Spacer(modifier = Modifier.height(12.dp))
+                                Spacer(modifier = Modifier.height(8.dp))
 
                                 Text(
                                     text = item.first,
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center,
-                                    fontSize = 18.sp
+                                    fontSize = 16.sp
                                 )
                             }
                         }
@@ -183,24 +201,24 @@ fun User(mAuth: FirebaseAuth, navController: NavHostController) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(16.dp),
+                                    .padding(12.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Image(
                                     painter = painterResource(id = item.second),
                                     contentDescription = item.first,
-                                    modifier = Modifier.size(120.dp)
+                                    modifier = Modifier.size(100.dp)
                                 )
 
-                                Spacer(modifier = Modifier.height(12.dp))
+                                Spacer(modifier = Modifier.height(8.dp))
 
                                 Text(
                                     text = item.first,
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center,
-                                    fontSize = 18.sp
+                                    fontSize = 16.sp
                                 )
                             }
                         }
@@ -465,8 +483,6 @@ fun CircularProfile(userData: String?, mAuth: FirebaseAuth) {
                             }
                         }
                     }
-
-
 
 
 

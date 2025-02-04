@@ -68,7 +68,7 @@ fun RegisterScreen(navController: NavHostController) {
                 contentDescription = "app logo",
             )
 
-            Text("Food Donation App", style = MaterialTheme.typography.titleLarge)
+            Text("Food Donation", style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.padding(12.dp))
 
             custTextInput(label = "Username", value = username, onValueChange = { username = it })
